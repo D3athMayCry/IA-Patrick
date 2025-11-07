@@ -1,3 +1,4 @@
+// Chatbot.js (Corrigido para a Vercel)
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -13,30 +14,28 @@ const Chatbot = ({ isOpen, onClose }) => {
     setInput('');
 
     try {
+      // ***** MUDANÇA PRINCIPAL AQUI *****
+      // Use um caminho relativo. A Vercel vai redirecionar
+      // isso para a sua função em /api/chat.js
       const response = await axios.post(
-        'https://api.groq.com/openai/v1/chat/completions',
+        '/api/chat', // <-- MUDOU DE 'http://localhost:3001/api/chat'
         {
-          model: "mixtral-8x7b-32768",
-          messages: [
-            { role: "system", content: "You are a helpful assistant specializing in automation and productivity." },
-            { role: "user", content: input }
-          ],
-        },
-        {
-          headers: {
-            'Authorization': `Bearer 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`,
-            'Content-Type': 'application/json',
-          },
+          userMessage: input 
         }
       );
+      // **********************************
 
-      const botMessage = { text: response.data.choices[0].message.content, user: false };
+      const botMessage = { text: response.data.botMessage, user: false };
       setMessages(prevMessages => [...prevMessages, botMessage]);
     } catch (error) {
-      console.error('Error sending message to Groq:', error);
+      console.error('Error sending message to backend:', error);
+      const errorMessage = { text: 'Desculpe, não consegui me conectar ao assistente.', user: false };
+      setMessages(prevMessages => [...prevMessages, errorMessage]);
     }
   };
 
+  // ... (o resto do seu componente continua igual) ...
+  
   if (!isOpen) return null;
 
   return (
