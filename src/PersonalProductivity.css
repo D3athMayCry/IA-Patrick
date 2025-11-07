@@ -1,0 +1,29 @@
+.personal-productivity {
+  padding: 20px;
+}
+
+.info-item {
+  margin-bottom: 20px;
+}
+
+.info-item h2 {
+  color: #333;
+}
+
+.info-item p {
+  color: #666;
+}
+
+.links {
+  margin-top: 10px;
+}
+
+.links a {
+  margin-right: 10px;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}

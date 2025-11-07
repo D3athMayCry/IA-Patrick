@@ -1,0 +1,29 @@
+.professional-productivity {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.info-item {
+  margin-bottom: 30px;
+}
+
+.info-item h2 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.links {
+  margin-top: 10px;
+}
+
+.links a {
+  display: inline-block;
+  margin-right: 10px;
+  color: #3498db;
+  text-decoration: none;
+}
+
+.links a:hover {
+  text-decoration: underline;
+}
