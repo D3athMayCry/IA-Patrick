@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios'; // <<< LINHA REMOVIDA
 
 const Chatbot = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState([]);
@@ -12,22 +12,34 @@ const Chatbot = ({ isOpen, onClose }) => {
     setMessages([...messages, userMessage]);
     setInput('');
 
+    // <<< BLOCO MODIFICADO PARA USAR FETCH >>>
     try {
-      // Esta chamada está correta. Ela chama o backend /api/chat
-      const response = await axios.post(
-        '/api/chat', 
-        {
+      // Esta chamada agora usa fetch para o backend /api/chat
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           userMessage: input 
-        }
-      );
+        })
+      });
+
+      if (!response.ok) {
+        // Se o servidor der erro (500, 404, etc.)
+        throw new Error('Falha ao conectar com o servidor');
+      }
       
-      const botMessage = { text: response.data.botMessage, user: false };
+      const data = await response.json();
+      const botMessage = { text: data.botMessage, user: false };
       setMessages(prevMessages => [...prevMessages, botMessage]);
+
     } catch (error) {
-      console.error('Error sending message to backend:', error);
+      console.error('Error sending message to backend:', error.message);
       const errorMessage = { text: 'Desculpe, não consegui me conectar ao assistente.', user: false };
       setMessages(prevMessages => [...prevMessages, errorMessage]);
     }
+    // <<< FIM DO BLOCO MODIFICADO >>>
   };
   
   if (!isOpen) return null;
