@@ -5,7 +5,7 @@ import PersonalProductivity from './PersonalProductivity';
 import ProfessionalProductivity from './ProfessionalProductivity';
 import Chatbot from './Chatbot';
 import logo from './assets/images/IA.png';
-import headerLogo from './assets/images/IA2.png';
+import headerLogo from './assets/images/IA.png';
 
 function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
