@@ -1,46 +1,71 @@
 // api/chat.js
 import axios from 'axios';
 
-// A Vercel vai lidar com esta função como um servidor
+// 1. Pega a sua nova chave de API das variáveis de ambiente da Vercel
+const API_KEY = process.env.GEMINI_API_KEY;
+
+// 2. Define a URL da API do Gemini (usando o modelo 'flash', que é rápido e gratuito)
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+
+// 3. A função principal da Vercel
 export default async function handler(req, res) {
-  // 1. Apenas permitir requisições POST
+  // 4. Verifica se é um método POST
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
     return res.status(405).end(`Método ${req.method} Não Permitido`);
   }
 
-  // 2. Pegar a mensagem do corpo da requisição
+  // 5. Pega a mensagem do usuário (do Chatbot.js)
   const { userMessage } = req.body;
 
   if (!userMessage) {
     return res.status(400).json({ error: 'Nenhuma mensagem fornecida' });
   }
 
-  // 3. Chamar a API da Groq (a chave vem das Variáveis de Ambiente)
-  try {
-    const response = await axios.post(
-      'https://api.groq.com/openai/v1/chat/completions',
+  // 6. Formata a mensagem para o padrão do Gemini
+  // O Gemini usa "contents" e "parts" em vez de "messages" e "content"
+  const payload = {
+    contents: [
       {
-        model: 'mixtral-8x7b-32768',
-        messages: [
-          { role: 'system', content: 'You are a helpful assistant specializing in automation and productivity.' },
-          { role: 'user', content: userMessage },
+        parts: [
+          {
+            text: "Você é um assistente prestativo focado em automação e produtividade."
+          }
         ],
+        role: "model" // Simulação do 'system'
       },
       {
+        parts: [
+          {
+            text: userMessage
+          }
+        ],
+        role: "user"
+      }
+    ]
+  };
+
+  // 7. Tenta chamar a API do Google
+  try {
+    const response = await axios.post(
+      API_URL,
+      payload,
+      {
         headers: {
-          // A Vercel pega isso das "Environment Variables" do seu projeto
-          'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
           'Content-Type': 'application/json',
         },
       }
     );
 
-    // 4. Enviar a resposta de volta para o seu React
-    res.status(200).json({ botMessage: response.data.choices[0].message.content });
+    // 8. Pega a resposta do bot do local correto
+    const botMessage = response.data.candidates[0].content.parts[0].text;
+    
+    // 9. Envia a resposta de volta para o seu Chatbot.js
+    res.status(200).json({ botMessage: botMessage });
 
   } catch (error) {
-    console.error('Erro ao chamar a API da Groq:', error.response ? error.response.data : error.message);
-    res.status(500).json({ error: 'Erro ao processar sua mensagem' });
+    // 10. Se der erro, mostra nos logs da Vercel
+    console.error("ERRO AO CHAMAR O GEMINI:", error.response ? error.response.data : error.message);
+    res.status(500).json({ error: 'Erro ao conectar com a IA do Google' });
   }
 }
