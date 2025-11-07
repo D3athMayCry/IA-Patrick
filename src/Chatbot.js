@@ -1,4 +1,3 @@
-// Chatbot.js (Corrigido para a Vercel)
 import React, { useState } from 'react';
 import axios from 'axios';
 
@@ -14,17 +13,14 @@ const Chatbot = ({ isOpen, onClose }) => {
     setInput('');
 
     try {
-      // ***** MUDANÇA PRINCIPAL AQUI *****
-      // Use um caminho relativo. A Vercel vai redirecionar
-      // isso para a sua função em /api/chat.js
+      // Esta chamada está correta. Ela chama o backend /api/chat
       const response = await axios.post(
-        '/api/chat', // <-- MUDOU DE 'http://localhost:3001/api/chat'
+        '/api/chat', 
         {
           userMessage: input 
         }
       );
-      // **********************************
-
+      
       const botMessage = { text: response.data.botMessage, user: false };
       setMessages(prevMessages => [...prevMessages, botMessage]);
     } catch (error) {
@@ -33,8 +29,6 @@ const Chatbot = ({ isOpen, onClose }) => {
       setMessages(prevMessages => [...prevMessages, errorMessage]);
     }
   };
-
-  // ... (o resto do seu componente continua igual) ...
   
   if (!isOpen) return null;
 
