@@ -4,7 +4,7 @@
 const API_KEY = process.env.GEMINI_API_KEY;
 
 // 2. Define a URL da API do Gemini
-const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+const API_URL = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
 // 3. A função principal da Vercel
 export default async function handler(req, res) {
@@ -73,4 +73,5 @@ export default async function handler(req, res) {
     console.error('ERRO GERAL NA FUNÇÃO:', error.message);
     res.status(500).json({ error: 'Erro ao conectar com a IA do Google' });
   }
+
 }
